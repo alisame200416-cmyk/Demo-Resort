@@ -1,0 +1,22 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Chalet resort configuration, pricing, and showcase images
+    match /resorts/{resortId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Individual resort images for high-speed synchronization without 1MB document limit
+    match /resort_images/{imageId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Bookings collection: Allows instant real-time synchronization across all devices
+    match /bookings/{bookingId} {
+      allow read: if true;
+      allow write: if true;
+    }
+  }
+}

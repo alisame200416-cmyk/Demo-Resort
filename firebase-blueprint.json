@@ -1,0 +1,63 @@
+{
+  "entities": {
+    "resorts": {
+      "description": "Chalet resort settings, contact info, pricing, and showcase image gallery",
+      "fields": {
+        "config": {
+          "type": "object",
+          "description": "General settings such as owner WhatsApp, PIN, hours, Google Maps link"
+        },
+        "pricing": {
+          "type": "object",
+          "description": "Pricing configuration in Iraqi Dinar (IQD) for morning/night and normal/weekend"
+        },
+        "images": {
+          "type": "object",
+          "description": "Resort showcase images (hero banner and gallery items)"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "ISO timestamp of last configuration update"
+        }
+      }
+    },
+    "resort_images": {
+      "description": "Individual resort images with URLs stored in Firebase Storage and mapped to Firestore keys",
+      "fields": {
+        "url": { "type": "string", "description": "Download URL from Firebase Storage" },
+        "updatedAt": { "type": "string", "description": "ISO timestamp when image was uploaded/updated" }
+      }
+    },
+    "bookings": {
+      "description": "Calendar reservations for morning and night shifts",
+      "fields": {
+        "id": { "type": "string", "description": "Unique booking identifier / shift key" },
+        "date": { "type": "string", "description": "Date of reservation in YYYY-MM-DD format" },
+        "shift": { "type": "string", "description": "Shift type: morning or night" },
+        "shiftLabel": { "type": "string", "description": "Arabic label for shift" },
+        "hours": { "type": "string", "description": "Shift hours" },
+        "customerName": { "type": "string", "description": "Customer full name" },
+        "customerPhone": { "type": "string", "description": "Validated Iraqi phone number" },
+        "totalPrice": { "type": "number", "description": "Total price in Iraqi Dinar" },
+        "depositAmount": { "type": "number", "description": "Deposit amount in IQD" },
+        "notes": { "type": "string", "description": "Customer notes or requests" },
+        "bookedAt": { "type": "string", "description": "ISO timestamp when booking was created" },
+        "status": { "type": "string", "description": "Booking status (confirmed, pending, cancelled)" }
+      }
+    }
+  },
+  "accessControl": {
+    "resorts": {
+      "read": "public",
+      "write": "public"
+    },
+    "resort_images": {
+      "read": "public",
+      "write": "public"
+    },
+    "bookings": {
+      "read": "public",
+      "write": "public"
+    }
+  }
+}
