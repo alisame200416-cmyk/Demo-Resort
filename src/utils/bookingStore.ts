@@ -7,6 +7,13 @@ const CONFIG_STORAGE_KEY = 'maryam_resort_config_v2';
 const PRICING_STORAGE_KEY = 'maryam_resort_pricing_v2';
 const IMAGES_STORAGE_KEY = 'maryam_resort_images_v2';
 
+export const DEMO_STORAGE_KEYS = [
+  BOOKINGS_STORAGE_KEY,
+  CONFIG_STORAGE_KEY,
+  PRICING_STORAGE_KEY,
+  IMAGES_STORAGE_KEY,
+];
+
 // Seed some initial bookings around current dates so the user immediately sees the green/red shifts in action
 export function getInitialSeedBookings(): Record<string, BookingRecord> {
   const today = new Date();
@@ -149,14 +156,8 @@ export function loadImagesConfig(): ResortImagesConfig {
     const raw = localStorage.getItem(IMAGES_STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      // Purge any old Unsplash URLs or huge base64 strings so only genuine Firestore/Storage URLs are used
-      const hasLegacyOrBase64 = Object.values(parsed).some(
-        (val) => typeof val === 'string' && (val.includes('unsplash.com') || val.startsWith('data:image'))
-      );
-      if (hasLegacyOrBase64) {
-        localStorage.removeItem(IMAGES_STORAGE_KEY);
-        return DEFAULT_RESORT_IMAGES;
-      }
+      // Demo mode intentionally allows local data URLs so uploaded images never
+      // need to be sent to a third-party image host or Firebase.
       return { ...DEFAULT_RESORT_IMAGES, ...parsed };
     }
   } catch (e) {
@@ -225,4 +226,49 @@ ${booking.notes ? `📝 *ملاحظات خاصة:* ${booking.notes}` : ''}
 يرجى تأكيد الحجز وتثبيت الموعد. شكراً جزيلاً لكم!`;
 
   return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(text)}`;
+}
+
+
+/** Reset only the local Demo data. This never touches Firebase or any remote service. */
+export function resetDemoData(): void {
+  try {
+    DEMO_STORAGE_KEYS.forEach((key) => localStorage.removeItem(key));
+  } catch (e) {
+    console.error('Failed to reset Demo data', e);
+  }
+}
+
+/**
+ * Convert an uploaded image to a local, resized data URL. The result is stored
+ * only in localStorage in Demo mode; no network upload is performed.
+ */
+export function readDemoImageFile(file: File, maxSize = 1600, quality = 0.82): Promise<string> {
+  return new Promise((resolve, reject) => {
+    if (!file.type.startsWith('image/')) {
+      reject(new Error('الملف المحدد ليس صورة صالحة. يرجى اختيار JPG أو PNG أو WEBP.'));
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('تعذر قراءة ملف الصورة.'));
+    reader.onload = () => {
+      const source = new Image();
+      source.onerror = () => reject(new Error('تعذر معالجة الصورة.'));
+      source.onload = () => {
+        const scale = Math.min(1, maxSize / Math.max(source.naturalWidth, source.naturalHeight));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.round(source.naturalWidth * scale));
+        canvas.height = Math.max(1, Math.round(source.naturalHeight * scale));
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('تعذر تجهيز مساحة الصورة المحلية.'));
+          return;
+        }
+        ctx.drawImage(source, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      source.src = String(reader.result);
+    };
+    reader.readAsDataURL(file);
+  });
 }

@@ -25,7 +25,6 @@ import {
   Camera,
   Loader2,
   Check,
-  Download,
   FolderArchive,
 } from 'lucide-react';
 import { BookingRecord, ChaletConfig, PricingConfig, ShiftType, ResortImagesConfig } from '../types';
@@ -38,15 +37,7 @@ import {
   formatDisplayIraqiPhone,
   toIraqiInternationalNumber,
 } from '../utils/validation';
-import {
-  saveChaletConfigToCloud,
-  savePricingConfigToCloud,
-  saveImagesConfigToCloud,
-  saveSingleImageToCloud,
-  uploadResortImageFile,
-  deleteResortImage,
-  saveBookingToCloud,
-} from '../lib/firebase';
+import { readDemoImageFile, resetDemoData } from '../utils/bookingStore';
 
 interface AdminDashboardProps {
   isOpen: boolean;
@@ -238,56 +229,52 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     e.preventDefault();
     try {
       onUpdateImagesConfig(tempImages);
-      await saveImagesConfigToCloud(tempImages);
-      setImagesSuccessMsg('تم حفظ وتحديث كافة صور المنتجع في قاعدة بيانات Firestore السحابية بنجاح!');
+      setImagesSuccessMsg('تم حفظ الصور محلياً على هذا الجهاز فقط. لم يتم رفع أي صورة إلى السحابة.');
       setTimeout(() => setImagesSuccessMsg(''), 4500);
     } catch (err) {
-      console.error('Failed to save images to cloud:', err);
-      setImagesSuccessMsg('حدث خطأ أثناء حفظ الصور في السحابة. يرجى التحقق من اتصال الإنترنت.');
+      console.error('Failed to save demo images locally:', err);
+      setImagesSuccessMsg('حدث خطأ أثناء حفظ الصور محلياً.');
     }
   };
 
   const handleSingleImageDelete = async (key: keyof ResortImagesConfig) => {
-    if (window.confirm('هل تريد حذف هذه الصورة من السحابة والموقع؟')) {
-      try {
-        await deleteResortImage(key);
-        const updated = {
-          ...tempImages,
-          [key]: '',
-        };
-        setTempImages(updated);
-        onUpdateImagesConfig(updated);
-        setImagesSuccessMsg(`تم حذف الصورة بنجاح وتحديث السحابة.`);
-        setTimeout(() => setImagesSuccessMsg(''), 3000);
-      } catch (err) {
-        console.error('Delete image error:', err);
-        alert('حدث خطأ أثناء حذف الصورة من السحابة.');
-      }
+    if (window.confirm('هل تريد حذف هذه الصورة من نسخة التجربة المحلية؟')) {
+      const updated = {
+        ...tempImages,
+        [key]: '',
+      };
+      setTempImages(updated);
+      onUpdateImagesConfig(updated);
+      setImagesSuccessMsg('تم حذف الصورة محلياً من نسخة التجربة.');
+      setTimeout(() => setImagesSuccessMsg(''), 3000);
     }
   };
 
   const handleFileUpload = async (key: keyof ResortImagesConfig, file: File) => {
     try {
       setIsProcessingKey(key);
-      // 1. Upload the real binary file via free ImgBB API and save permanent URL to Firestore
-      const directImageUrl = await uploadResortImageFile(key, file);
-
-      // 2. Update local state and parent state immediately
+      const localImageDataUrl = await readDemoImageFile(file);
       const updated = {
         ...tempImages,
-        [key]: directImageUrl,
+        [key]: localImageDataUrl,
       };
       setTempImages(updated);
       onUpdateImagesConfig(updated);
-
-      setImagesSuccessMsg('تم رفع الصورة بنجاح عبر ImgBB وحفظ الرابط الدائم في Firestore وتحديث الموقع فوراً!');
+      setImagesSuccessMsg('تم حفظ الصورة محلياً على هذا الجهاز فقط — لا يوجد رفع إلى أي خدمة سحابية.');
       setTimeout(() => setImagesSuccessMsg(''), 4500);
     } catch (err: any) {
-      console.error('ImgBB upload error:', err);
-      const errMsg = err?.message || 'حدث خطأ أثناء رفع الصورة. يرجى المحاولة مرة أخرى.';
+      console.error('Local Demo image error:', err);
+      const errMsg = err?.message || 'حدث خطأ أثناء معالجة الصورة محلياً.';
       alert(errMsg);
     } finally {
       setIsProcessingKey(null);
+    }
+  };
+
+  const handleResetDemoFromPanel = () => {
+    if (window.confirm('سيتم حذف جميع تعديلات نسخة التجربة من هذا الجهاز وإرجاع البيانات الأصلية. هل تريد المتابعة؟')) {
+      resetDemoData();
+      window.location.reload();
     }
   };
 
@@ -310,25 +297,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </h2>
                 <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-500/50 text-[10px] text-emerald-300 font-medium">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                  <span>سحابة Firebase متزامنة لحظياً</span>
+                  <span>وضع تجريبي محلي — بدون سحابة</span>
                 </div>
               </div>
               <span className="text-[11px] sm:text-xs text-[#a39a8c] block truncate max-w-[260px] sm:max-w-none">
-                التحكم المباشر في الفترات، إلغاء وإطلاق الحجوزات، وضبط الأسعار سحابياً
+                التحكم التجريبي في الفترات والحجوزات والأسعار والإعدادات — وكل التعديلات محلية
               </span>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <a
-              href={`${import.meta.env.BASE_URL}Demo-Resort.zip`}
-              download="Demo-Resort.zip"
-              className="px-2.5 sm:px-3 py-1.5 rounded-lg bg-[#14221c] hover:bg-[#c5a059] hover:text-[#0c1411] text-xs font-semibold text-[#c5a059] border border-[#c5a059]/40 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
-              title="تحميل أرشيف المشروع الكامل (Demo-Resort.zip) للرفع على GitHub"
-            >
-              <Download className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">تحميل ZIP المشروع</span>
-            </a>
             {isAdminLoggedIn && (
               <button
                 onClick={onLogout}
@@ -432,9 +410,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <span className="text-xs text-[#a39a8c] block mb-1">حالة النظام</span>
                 <p className="text-sm font-bold text-emerald-400 flex items-center gap-1">
                   <CheckCircle2 className="w-4 h-4" />
-                  <span>تحديث لحظي نشط</span>
+                  <span>حفظ محلي نشط</span>
                 </p>
-                <span className="text-[11px] text-[#635c52]">منع حجز مزدوج 100%</span>
+                <span className="text-[11px] text-[#635c52]">لا توجد مزامنة مع Firebase</span>
               </div>
             </div>
 
@@ -1126,48 +1104,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   </button>
                 </form>
 
-                {/* GitHub & Standalone Export Package */}
-                <div className="p-5 rounded-2xl bg-[#0c1411] border border-[#c5a059]/40 space-y-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-[#c5a059]/15 border border-[#c5a059]/40 flex items-center justify-center text-[#c5a059]">
-                        <FolderArchive className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-bold text-[#f4efe6] flex items-center gap-2">
-                          <span>حزمة النشر الجاهزة لمستودع GitHub (Demo-Resort)</span>
-                          <span className="text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-full font-bold">
-                            جاهز للتحميل
-                          </span>
-                        </h4>
-                        <p className="text-xs text-[#a39a8c] mt-0.5">
-                          ملف ZIP نظيف يحتوي على كافة ملفات الكود المصدري وإعدادات GitHub Actions ومسار النشر المهيأ.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-[#14221c] border border-[#23382e] text-xs text-[#a39a8c] space-y-1">
-                    <p className="text-[#f4efe6] font-semibold">محتويات الأرشيف المدمجة:</p>
-                    <ul className="list-disc list-inside space-y-0.5 text-[11px] text-[#c0b7a8]">
-                      <li>مجلد سير العمل الآلي المخفي: <code className="text-[#c5a059]">.github/workflows/deploy.yml</code></li>
-                      <li>إعداد مسار النشر الأساسي في Vite: <code className="text-[#c5a059]">base: '/Demo-Resort/'</code></li>
-                      <li>مفاتيح الربط السحابي ومزامنة الحجوزات مع Firebase</li>
-                    </ul>
-                  </div>
-
-                  <a
-                    href={`${import.meta.env.BASE_URL}Demo-Resort.zip`}
-                    download="Demo-Resort.zip"
-                    className="w-full py-3 rounded-xl bg-gradient-to-r from-[#c5a059] to-[#b38e46] text-[#0c1411] font-bold text-xs hover:from-[#d5b069] hover:to-[#c5a059] transition-all shadow-md shadow-[#c5a059]/20 flex items-center justify-center gap-2 cursor-pointer"
-                  >
-                    <Download className="w-4 h-4" />
-                    <span>تحميل ملف Demo-Resort.zip مباشرة الآن</span>
-                  </a>
-                </div>
-              </div>
-            )}
-
             {/* TAB 4: Direct File Upload Image Management (Owner Control Panel) */}
             {activeTab === 'images' && (
               <div className="space-y-6">
@@ -1176,10 +1112,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <div>
                     <h3 className="text-base font-bold text-[#f4efe6] flex items-center gap-2">
                       <Upload className="w-5 h-5 text-[#c5a059]" />
-                      <span>رفع وتثبيت صور المنتجع عبر ImgBB السحابي المجاني (بدون بطاقة بنكية)</span>
+                      <span>رفع وحفظ صور المنتجع محلياً على هذا الجهاز فقط</span>
                     </h3>
                     <p className="text-xs text-[#a39a8c] mt-1">
-                      يتم رفع ملفات الصور مباشرة عبر خدمة ImgBB المجانية وحفظ الروابط المباشرة في Firestore لتبقى الصور ثابتة دائماً حتى بعد التمرير والتحديث.
+                      يتم تحويل الصور إلى نسخة محلية مصغرة وحفظها داخل متصفحك فقط، ولا يتم إرسالها إلى أي خدمة سحابية.
                     </p>
                   </div>
 
@@ -1190,7 +1126,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#c5a059] to-[#b38e46] text-[#0c1411] font-bold text-xs hover:from-[#d5b069] hover:to-[#c5a059] transition-all shadow-md shadow-[#c5a059]/20 flex items-center justify-center gap-1.5 cursor-pointer"
                     >
                       <CheckCircle2 className="w-4 h-4" />
-                      <span>تأكيد وحفظ كافة الصور في Firestore</span>
+                      <span>تأكيد وحفظ الصور محلياً</span>
                     </button>
                   </div>
                 </div>
@@ -1207,7 +1143,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <div className="p-3.5 rounded-xl bg-[#14221c]/70 border border-[#23382e] text-[11px] sm:text-xs text-[#a39a8c] flex items-start gap-2.5">
                   <Sparkles className="w-4 h-4 text-[#c5a059] shrink-0 mt-0.5" />
                   <p className="leading-relaxed">
-                    <strong className="text-[#f4efe6]">نظام رفع الصور المجاني (ImgBB + Firestore):</strong> عند اختيار صورة من جهازك، يتم رفعها فوراً إلى ImgBB مجاناً دون بطاقة بنكية، ويتم أخذ الرابط المباشر الدائم (https://i.ibb.co/...) وحفظه في قاعدة بيانات Firestore السحابية فوراً لضمان بقائها دائمة وعدم اختفائها أبداً عند التمرير أو تحديث الصفحة!
+                    <strong className="text-[#f4efe6]">نظام رفع الصور المحلي المجاني:</strong> عند اختيار صورة من جهازك، تتم معالجتها وحفظها محلياً على هذا الجهاز فقط. لا يتم رفع الصورة إلى أي خدمة سحابية.
                   </p>
                 </div>
 
@@ -1346,7 +1282,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                     <Camera className="w-5 h-5" />
                                   </div>
                                   <span className="text-xs font-bold text-[#d2c9b8]">لم يتم رفع صورة بعد</span>
-                                  <span className="text-[10px] text-[#786e60] mt-0.5">انقر لرفع صورة عبر ImgBB مجاناً</span>
+                                  <span className="text-[10px] text-[#786e60] mt-0.5">انقر لإضافة صورة محلياً</span>
                                 </div>
                               )}
 
@@ -1355,7 +1291,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                 <div className="absolute inset-0 bg-black/85 flex flex-col items-center justify-center p-3 text-center animate-fade-in z-20">
                                   <Loader2 className="w-8 h-8 text-[#c5a059] animate-spin mb-2" />
                                   <span className="text-xs font-bold text-[#f4efe6]">
-                                    جاري رفع الصورة إلى ImgBB...
+                                    جاري تجهيز الصورة محلياً...
                                   </span>
                                   <span className="text-[10px] text-[#a39a8c] mt-0.5">
                                     يتم استخراج الرابط المباشر وحفظه في Firestore
@@ -1404,7 +1340,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                               {isUploading ? (
                                 <>
                                   <Loader2 className="w-4 h-4 text-[#c5a059] animate-spin" />
-                                  <span>جاري الرفع إلى ImgBB...</span>
+                                  <span>جاري الحفظ محلياً...</span>
                                 </>
                               ) : (
                                 <>
@@ -1412,7 +1348,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                   <span>
                                     {hasUploadedImage
                                       ? 'استبدال الصورة بملف جديد من الجهاز'
-                                      : 'رفع ملف صورة عبر ImgBB مجاناً'}
+                                      : 'إضافة ملف صورة محلياً'}
                                   </span>
                                 </>
                               )}
@@ -1429,7 +1365,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                 className="text-cyan-400 hover:text-cyan-300 flex items-center gap-1 transition-colors"
                               >
                                 <ExternalLink className="w-3 h-3" />
-                                <span>معاينة الرابط المباشر (ImgBB)</span>
+                                <span>معاينة الصورة المحلية</span>
                               </a>
                             ) : (
                               <span className="text-zinc-600">لا توجد صورة بعد</span>
