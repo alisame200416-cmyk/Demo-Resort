@@ -1,20 +1,42 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Demo-Resort | نظام حجز وإدارة شاليه ومنتجع مريم (نسخة العرض التجريبية)
 
-# Run and deploy your AI Studio app
+تطبيق ويب متكامل وتفاعلي لحجز وإدارة الشاليهات والمنتجعات السياحية، مبني بأحدث التقنيات ويدعم المزامنة السحابية الفورية.
 
-This contains everything you need to run your app locally.
+## 🚀 المميزات الرئيسية
+- 📅 **تقويم حجوزات ذكي**: يدعم الفترات الصباحية والمسائية واليوم الكامل مع أسعار مرنة ومزامنة سحابية مباشرة عبر Firebase Firestore.
+- 🏊 **استعراض تفاعلي للمرافق**: استعراض المسبح الأولمبي، مسبح الأطفال، المحمية الطبيعية، وجلسات الشواء مع معرض صور كامل (Lightbox).
+- 🛡️ **لوحة تحكم إدارية محمية برمز PIN**: إدارة كاملة لكافة الحجوزات، كشف الأرقام المشبوهة، الحظر اليدوي للتواريخ، وتعديل الأسعار والصور.
+- ⚡ **أداء فائق وسرعة تحميل**: تطبيق تحميل الصور الكسول `loading="lazy"` و `decoding="async"` وتجهيز الاتصال المسبق بالسيرفرات السحابية.
+- 🤖 **أتمتة النشر عبر GitHub Actions**: يحتوي المشروع على سير عمل آلي مدمج يبني التطبيق وينشره على **GitHub Pages** بمجرد الرفع.
 
-View your app in AI Studio: https://ai.studio/apps/41bc66c8-2994-4f82-8bb1-c1753c995f72
+---
 
-## Run Locally
+## 💻 التشغيل المحلي (Local Development)
 
-**Prerequisites:**  Node.js
+```bash
+# تثبيت الحزم
+npm install
 
+# تشغيل خادم التطوير المحلي
+npm run dev
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+# بناء النسخة الإنتاجية
+npm run build
+```
+
+---
+
+## 🌐 النشر على GitHub Pages
+
+المشروع مجهز مسبقاً بمسار الأساس:
+```ts
+base: '/Demo-Resort/'
+```
+وملف سير العمل `.github/workflows/deploy.yml` سيتكفل بالبناء والنشر تلقائياً بمجرد رفع الكود إلى فرع `main`.
+
+لتفعيل GitHub Pages في مستودع `Demo-Resort`:
+1. انتقل إلى إعدادات المستودع **Settings** في GitHub.
+2. اختر **Pages** من القائمة الجانبية.
+3. تحت خيار **Build and deployment -> Source**، اختر **GitHub Actions**.
+4. سيعمل ملف النشر الآلي وتصبح النسخة التجريبية متاحة على الرابط:
+   `https://<YOUR_GITHUB_USERNAME>.github.io/Demo-Resort/`

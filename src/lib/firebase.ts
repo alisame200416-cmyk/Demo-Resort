@@ -32,14 +32,13 @@ export interface FirebaseCustomConfig {
   firestoreDatabaseId?: string;
 }
 
-// تم وضع مفاتيح النسخة التجريبية (Demo) بنجاح
 export const DEFAULT_FIREBASE_CONFIG: FirebaseCustomConfig = {
-  apiKey: "AIzaSyBhDYFiljip3ErXiwCVcCBNifqfBJ6Wyw4",
-  authDomain: "resort-demo-12c7c.firebaseapp.com",
-  projectId: "resort-demo-12c7c",
-  storageBucket: "resort-demo-12c7c.firebasestorage.app",
-  messagingSenderId: "137816466603",
-  appId: "1:137816466603:web:0043282966f222b7cd83ee",
+  apiKey: "AIzaSyDLLusnOb1qa5bDWC0sPSlxsP9jexL4TjY",
+  authDomain: "maryam-resort.firebaseapp.com",
+  projectId: "maryam-resort",
+  storageBucket: "maryam-resort.firebasestorage.app",
+  messagingSenderId: "894822537731",
+  appId: "1:894822537731:web:e68a42816ecebcf094cc36",
   firestoreDatabaseId: "",
 };
 

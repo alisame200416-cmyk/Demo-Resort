@@ -25,6 +25,8 @@ import {
   Camera,
   Loader2,
   Check,
+  Download,
+  FolderArchive,
 } from 'lucide-react';
 import { BookingRecord, ChaletConfig, PricingConfig, ShiftType, ResortImagesConfig } from '../types';
 import { formatArabicDate, getArabicDayName } from '../utils/dateHelpers';
@@ -318,6 +320,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
+            <a
+              href={`${import.meta.env.BASE_URL}Demo-Resort.zip`}
+              download="Demo-Resort.zip"
+              className="px-2.5 sm:px-3 py-1.5 rounded-lg bg-[#14221c] hover:bg-[#c5a059] hover:text-[#0c1411] text-xs font-semibold text-[#c5a059] border border-[#c5a059]/40 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+              title="تحميل أرشيف المشروع الكامل (Demo-Resort.zip) للرفع على GitHub"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">تحميل ZIP المشروع</span>
+            </a>
             {isAdminLoggedIn && (
               <button
                 onClick={onLogout}
@@ -1114,6 +1125,46 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     حفظ كافة التعديلات والأسعار
                   </button>
                 </form>
+
+                {/* GitHub & Standalone Export Package */}
+                <div className="p-5 rounded-2xl bg-[#0c1411] border border-[#c5a059]/40 space-y-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-[#c5a059]/15 border border-[#c5a059]/40 flex items-center justify-center text-[#c5a059]">
+                        <FolderArchive className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-bold text-[#f4efe6] flex items-center gap-2">
+                          <span>حزمة النشر الجاهزة لمستودع GitHub (Demo-Resort)</span>
+                          <span className="text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-full font-bold">
+                            جاهز للتحميل
+                          </span>
+                        </h4>
+                        <p className="text-xs text-[#a39a8c] mt-0.5">
+                          ملف ZIP نظيف يحتوي على كافة ملفات الكود المصدري وإعدادات GitHub Actions ومسار النشر المهيأ.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-[#14221c] border border-[#23382e] text-xs text-[#a39a8c] space-y-1">
+                    <p className="text-[#f4efe6] font-semibold">محتويات الأرشيف المدمجة:</p>
+                    <ul className="list-disc list-inside space-y-0.5 text-[11px] text-[#c0b7a8]">
+                      <li>مجلد سير العمل الآلي المخفي: <code className="text-[#c5a059]">.github/workflows/deploy.yml</code></li>
+                      <li>إعداد مسار النشر الأساسي في Vite: <code className="text-[#c5a059]">base: '/Demo-Resort/'</code></li>
+                      <li>مفاتيح الربط السحابي ومزامنة الحجوزات مع Firebase</li>
+                    </ul>
+                  </div>
+
+                  <a
+                    href={`${import.meta.env.BASE_URL}Demo-Resort.zip`}
+                    download="Demo-Resort.zip"
+                    className="w-full py-3 rounded-xl bg-gradient-to-r from-[#c5a059] to-[#b38e46] text-[#0c1411] font-bold text-xs hover:from-[#d5b069] hover:to-[#c5a059] transition-all shadow-md shadow-[#c5a059]/20 flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>تحميل ملف Demo-Resort.zip مباشرة الآن</span>
+                  </a>
+                </div>
               </div>
             )}
 
