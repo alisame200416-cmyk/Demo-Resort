@@ -95,7 +95,7 @@ export const FacilityExplorer: React.FC<FacilityExplorerProps> = ({ onScrollToBo
                       <div className="w-12 h-12 rounded-2xl bg-[#1b2f25] border border-[#2e473a] flex items-center justify-center mb-2">
                         {facilityIcons[facility.iconName] || <Sparkles className="w-6 h-6 text-[#c5a059]" />}
                       </div>
-                      <span className="text-[11px] text-[#8c8273]">بانتظار صورة المرفق من السحابة</span>
+                      <span className="text-[11px] text-[#8c8273]">بانتظار إضافة صورة محلية للمرفق</span>
                     </div>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0c1411] via-[#0c1411]/30 to-transparent pointer-events-none" />
@@ -166,7 +166,7 @@ export const FacilityExplorer: React.FC<FacilityExplorerProps> = ({ onScrollToBo
                   <div className="w-16 h-16 rounded-2xl bg-[#1b2f25] border border-[#2e473a] flex items-center justify-center mb-2">
                     {facilityIcons[selectedFacility.iconName] || <Sparkles className="w-8 h-8 text-[#c5a059]" />}
                   </div>
-                  <span className="text-xs text-[#8c8273]">بانتظار قراءة صورة المرفق من Firestore</span>
+                  <span className="text-xs text-[#8c8273]">بانتظار إضافة صورة محلية للمرفق</span>
                 </div>
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-[#111e18] via-[#111e18]/40 to-black/30 pointer-events-none" />

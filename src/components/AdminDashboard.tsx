@@ -25,7 +25,6 @@ import {
   Camera,
   Loader2,
   Check,
-  FolderArchive,
 } from 'lucide-react';
 import { BookingRecord, ChaletConfig, PricingConfig, ShiftType, ResortImagesConfig } from '../types';
 import { formatArabicDate, getArabicDayName } from '../utils/dateHelpers';
@@ -56,7 +55,6 @@ interface AdminDashboardProps {
   onUpdatePricingConfig: (pricing: PricingConfig) => void;
   imagesConfig: ResortImagesConfig;
   onUpdateImagesConfig: (images: ResortImagesConfig) => void;
-  cloudStatus?: 'synced' | 'connecting' | 'local';
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({
@@ -76,7 +74,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   onUpdatePricingConfig,
   imagesConfig,
   onUpdateImagesConfig,
-  cloudStatus = 'synced',
 }) => {
   const [pinInput, setPinInput] = useState('');
   const [pinError, setPinError] = useState(false);
@@ -1104,6 +1101,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   </button>
                 </form>
 
+              </div>
+            )}
+
             {/* TAB 4: Direct File Upload Image Management (Owner Control Panel) */}
             {activeTab === 'images' && (
               <div className="space-y-6">
@@ -1294,7 +1294,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                     جاري تجهيز الصورة محلياً...
                                   </span>
                                   <span className="text-[10px] text-[#a39a8c] mt-0.5">
-                                    يتم استخراج الرابط المباشر وحفظه في Firestore
+                                    تتم معالجة الملف وحفظه في هذا المتصفح فقط
                                   </span>
                                 </div>
                               ) : (
@@ -1314,7 +1314,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                 {hasUploadedImage ? (
                                   <span className="flex items-center gap-1 text-[10px] font-semibold text-emerald-300 bg-emerald-950/90 px-2 py-0.5 rounded-full border border-emerald-500/40 shadow-sm backdrop-blur-sm">
                                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                                    <span>محفوظة في السحابة</span>
+                                    <span>محفوظة محلياً</span>
                                   </span>
                                 ) : (
                                   <span className="text-[10px] font-medium text-amber-300 bg-amber-950/80 px-2 py-0.5 rounded-full backdrop-blur-sm border border-amber-500/30">
@@ -1376,7 +1376,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                 type="button"
                                 onClick={() => handleSingleImageDelete(item.key)}
                                 className="text-rose-400 hover:text-rose-300 flex items-center gap-1 cursor-pointer transition-colors"
-                                title="حذف الصورة من السحابة"
+                                title="حذف الصورة المحلية"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                                 <span>حذف الصورة</span>
@@ -1395,7 +1395,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#c5a059] to-[#b38e46] text-[#0c1411] font-bold text-sm hover:from-[#d5b069] hover:to-[#c5a059] transition-all shadow-lg shadow-[#c5a059]/20 flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <CheckCircle2 className="w-5 h-5" />
-                      <span>حفظ وتأكيد كافة صور المنتجع في Firestore (Save All)</span>
+                      <span>حفظ وتأكيد كافة صور المنتجع محلياً</span>
                     </button>
                   </div>
                 </form>

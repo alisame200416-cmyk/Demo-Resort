@@ -1,6 +1,0 @@
-{
-  "name": "شاليه مريم",
-  "description": "الموقع الرسمي لحجز شاليه مريم في البصرة - أبو الخصيب. منتجع سياحي فاخر بمساحة 2500 م²، مسبح خاص أولمبي، مسبح أطفال، مزرعة حيوانات أليفة، جلسات شواء، وحجز إلكتروني فوري.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
