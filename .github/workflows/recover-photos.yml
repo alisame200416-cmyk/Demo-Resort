@@ -1,0 +1,40 @@
+name: Recover showcase photos
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: write
+
+jobs:
+  recover:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Recover existing showcase photos read-only
+        shell: bash
+        run: |
+          set -euo pipefail
+          cfg="$(curl -fsSL https://raw.githubusercontent.com/alisame200416-cmyk/maryam/main/firebase-applet-config.json)"
+          key="$(printf '%s' "$cfg" | jq -r '.apiKey // .firebase.apiKey // empty')"
+          test -n "$key"
+          base="https://firestore.googleapis.com/v1/projects/maryam-resort/databases/(default)/documents"
+          curl -fsSL "$base/resort_images?key=$key" -o /tmp/images.json
+          mkdir -p public/demo-images
+          jq -r '.documents[]? | [(.name|split("/")|last), .fields.url.stringValue] | @tsv' /tmp/images.json |
+          while IFS=$'\t' read -r name url; do
+            [ -n "$name" ] && [ -n "$url" ] || continue
+            curl -fL --retry 2 "$url" -o "public/demo-images/$name.jpg"
+          done
+          test "$(find public/demo-images -type f | wc -l)" -gt 0
+      - name: Commit recovered photos
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/demo-images
+          git diff --cached --quiet && exit 0
+          git commit -m "Restore showcase photos for demo"
+          git push
