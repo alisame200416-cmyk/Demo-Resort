@@ -5,7 +5,7 @@ import { toIraqiInternationalNumber } from './validation';
 const BOOKINGS_STORAGE_KEY = 'maryam_resort_bookings_v2';
 const CONFIG_STORAGE_KEY = 'maryam_resort_config_v2';
 const PRICING_STORAGE_KEY = 'maryam_resort_pricing_v2';
-const IMAGES_STORAGE_KEY = 'maryam_resort_images_v2';
+const IMAGES_STORAGE_KEY = 'maryam_resort_images_v3';
 
 export const DEMO_STORAGE_KEYS = [
   BOOKINGS_STORAGE_KEY,
