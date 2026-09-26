@@ -10,16 +10,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Fetch existing photo metadata read-only
+      - name: Materialize recovered showcase photos
+        shell: bash
         run: |
-          cfg="$(curl -sSL https://raw.githubusercontent.com/alisame200416-cmyk/maryam/main/firebase-applet-config.json)"
-          key="$(printf '%s' "$cfg" | jq -r '.apiKey // empty')"
-          curl -sSL "https://firestore.googleapis.com/v1/projects/maryam-resort/databases/(default)/documents/resort_images?key=$key" -o recovery-images.json
-      - name: Commit recovery metadata
+          set -euo pipefail
+          mkdir -p public/demo-images
+          jq -r '.documents[]? | [(.name|split("/")|last), .fields.url.stringValue] | @base64' recovery-images.json |
+          while read -r row; do
+            item="$(printf '%s' "$row" | base64 -d)"
+            name="$(printf '%s' "$item" | jq -r '.[0]')"
+            url="$(printf '%s' "$item" | jq -r '.[1]')"
+            if [[ "$url" == data:image/*base64,* ]]; then
+              printf '%s' "${url#*,}" | base64 -d > "public/demo-images/$name.jpg"
+            else
+              curl -fL --retry 2 "$url" -o "public/demo-images/$name.jpg"
+            fi
+          done
+          test "$(find public/demo-images -type f | wc -l)" -ge 5
+      - name: Commit recovered photos
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add recovery-images.json
+          git add public/demo-images
           git diff --cached --quiet && exit 0
-          git commit -m "Capture existing showcase photo metadata"
+          git commit -m "Restore showcase photos for demo"
           git push
