@@ -36,7 +36,7 @@ export const PoolSection: React.FC<PoolSectionProps> = ({ imagesConfig, isImages
             {poolImage ? (
               <img
                 src={poolImage}
-                alt="صورة المسبح الأولمبي من Firestore"
+                alt="صورة المسبح الأولمبي المحلية"
                 loading="lazy"
                 decoding="async"
                 className="w-full h-[400px] sm:h-[480px] object-cover group-hover:scale-105 transition-transform duration-700"
@@ -50,7 +50,7 @@ export const PoolSection: React.FC<PoolSectionProps> = ({ imagesConfig, isImages
                 <h3 className="text-lg font-bold text-[#f4efe6] mb-1">المسبح الأولمبي 15×8 متر</h3>
                 <p className="text-xs text-[#a39a8c] max-w-sm">
                   {isImagesLoading
-                    ? 'جاري جلب صورة المسبح من Firestore...'
+                    ? 'أضف صورة المسبح من لوحة الإدارة المحلية'
                     : 'بانتظار رفع صورة المسبح الفعلية من لوحة الإدارة'}
                 </p>
               </div>

@@ -152,7 +152,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
                     </p>
                     <span className="text-[11px] text-[#786e60]">
                       {isImagesLoading
-                        ? 'جاري جلب الصورة من Firestore...'
+                        ? 'أضف الصورة من لوحة الإدارة المحلية'
                         : 'بانتظار رفع صورة المرفق من لوحة الإدارة'}
                     </span>
                   </div>

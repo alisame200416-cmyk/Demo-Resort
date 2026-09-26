@@ -41,7 +41,7 @@ export const Hero: React.FC<HeroProps> = ({
             {isImagesLoading && (
               <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#0c1411]/80 border border-[#c5a059]/30 text-[#c5a059] text-xs font-semibold backdrop-blur-md">
                 <Loader2 className="w-4 h-4 animate-spin text-[#c5a059]" />
-                <span>جاري استرجاع صورة الواجهة من Firestore...</span>
+                <span>أضف صورة الواجهة من لوحة الإدارة المحلية</span>
               </div>
             )}
           </div>

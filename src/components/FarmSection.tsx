@@ -50,7 +50,7 @@ export const FarmSection: React.FC<FarmSectionProps> = ({ imagesConfig }) => {
                     <div className="w-12 h-12 rounded-2xl bg-[#1d3528] border border-[#2d523e] flex items-center justify-center mb-2 text-emerald-400">
                       <Compass className="w-6 h-6" />
                     </div>
-                    <span className="text-[11px] text-[#8c8273]">بانتظار صورة المحمية من Firestore</span>
+                    <span className="text-[11px] text-[#8c8273]">بانتظار إضافة صورة محلية للمحمية</span>
                   </div>
                 )}
                 <div className="absolute top-3 right-3">

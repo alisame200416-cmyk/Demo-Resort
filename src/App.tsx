@@ -236,7 +236,6 @@ export default function App() {
         onUpdatePricingConfig={handleUpdatePricingConfig}
         imagesConfig={imagesConfig}
         onUpdateImagesConfig={handleUpdateImagesConfig}
-        cloudStatus="local"
       />
 
       {/* Mobile QR Code Sharing & Scan Modal */}
