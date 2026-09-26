@@ -23,16 +23,16 @@ export const DEFAULT_PRICING_CONFIG: PricingConfig = {
 };
 
 export const DEFAULT_RESORT_IMAGES: ResortImagesConfig = {
-  heroBanner: '',
-  swimmingPool: '',
-  animalSanctuary: '',
-  kidsPlayground: '',
-  sportsRecreation: '',
-  outdoorBbq: '',
-  adultGames: '',
-  masterBedrooms: '',
-  villaExterior: '',
-  nightPool: '',
+  heroBanner: '/Demo-Resort/demo-images/heroBanner.jpg',
+  swimmingPool: '/Demo-Resort/demo-images/swimmingPool.jpg',
+  animalSanctuary: '/Demo-Resort/demo-images/animalSanctuary.jpg',
+  kidsPlayground: '/Demo-Resort/demo-images/kidsPlayground.jpg',
+  sportsRecreation: '/Demo-Resort/demo-images/sportsRecreation.jpg',
+  outdoorBbq: '/Demo-Resort/demo-images/outdoorBbq.jpg',
+  adultGames: '/Demo-Resort/demo-images/adultGames.jpg',
+  masterBedrooms: '/Demo-Resort/demo-images/masterBedrooms.jpg',
+  villaExterior: '/Demo-Resort/demo-images/villaExterior.jpg',
+  nightPool: '/Demo-Resort/demo-images/nightPool.jpg',
 };
 
 // 7 Interactive Facility Explorer Items dynamically bound to current images
