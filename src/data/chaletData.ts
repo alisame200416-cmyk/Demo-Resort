@@ -5,7 +5,7 @@ export const DEFAULT_CHALET_CONFIG: ChaletConfig = {
   englishName: 'Maryam Resort & Chalet',
   location: 'البصرة - أبو الخصيب / منطقة حمدان (مساحة 2500 متر مربع)',
   city: 'البصرة، العراق',
-  ownerWhatsApp: '9647726187519', // Direct WhatsApp link to 07726187519
+  ownerWhatsApp: '07728038760', // Demo contact number
   googleMapsUrl: 'https://maps.app.goo.gl/DtcTahhdrzhLzKMc6',
   adminPin: '1234',
   morningShiftHours: '09:00 ص إلى 05:00 م',
