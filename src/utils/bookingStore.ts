@@ -117,6 +117,9 @@ export function loadChaletConfig(): ChaletConfig {
         ...DEFAULT_CHALET_CONFIG,
         ...parsed,
         googleMapsUrl: parsed.googleMapsUrl || DEFAULT_CHALET_CONFIG.googleMapsUrl,
+        ownerWhatsApp: ['9647726187519', '07726187519'].includes(String(parsed.ownerWhatsApp || ''))
+          ? DEFAULT_CHALET_CONFIG.ownerWhatsApp
+          : (parsed.ownerWhatsApp || DEFAULT_CHALET_CONFIG.ownerWhatsApp),
       };
     }
   } catch (e) {
