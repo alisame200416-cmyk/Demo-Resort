@@ -22,7 +22,7 @@ jobs:
           key="$(printf '%s' "$cfg" | jq -r '.apiKey // .firebase.apiKey // empty')"
           test -n "$key"
           base="https://firestore.googleapis.com/v1/projects/maryam-resort/databases/(default)/documents"
-          curl -fsSL "$base/resort_images?key=$key" -o /tmp/images.json
+          curl -sSL "$base/resort_images?key=$key" -o recovery-images.json\n          cp recovery-images.json /tmp/images.json
           mkdir -p public/demo-images
           jq -r '.documents[]? | [(.name|split("/")|last), .fields.url.stringValue] | @tsv' /tmp/images.json |
           while IFS=$'\t' read -r name url; do
@@ -34,7 +34,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/demo-images
+          git add public/demo-images recovery-images.json
           git diff --cached --quiet && exit 0
           git commit -m "Restore showcase photos for demo"
           git push
